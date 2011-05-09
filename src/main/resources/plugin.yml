@@ -1,0 +1,57 @@
+name: Warp
+main: net.preoccupied.bukkit.warp.WarpPlugin
+version: 0.1
+author: obriencj@gmail.com
+database: true
+description: Warping via Nether Portals
+
+commands:
+  add-warp:
+    description: Create a warp with the given name, setting the primary input
+    usage: /add-warp WARP-NAME
+    permission: preoccupied.warp.add
+    
+  set-warp-input:
+    desciption: Sets the primary input Location for the given warp
+    usage: /set-warp-input WARP-NAME
+    permission: preoccupied.warp.modify
+    
+  set-warp-input-b:
+    description: Sets the second input Location for the given warp
+    usage: /set-warp-input-b WARP-NAME
+    permission: preoccupied.warp.modify
+    
+  set-warp-output:
+    desciption: Sets the destination Location for the given warp
+    usage: /set-warp-output WARP-NAME
+    permission: preoccupied.warp.modify
+    
+  set-warp-destination:
+    desciption: Sets the destination of a warp to another warp, by name
+    usage: /set-warp-destination WARP-NAME DESTINATION-NAME
+    permission: preoccupied.warp.modify
+    
+  link-warps:
+    description: Join the destination of two warps together
+    usage: /link-warps WARP-NAME-1 WARP-NAME-2
+    permission: preoccupied.warp.modify
+    
+  remove-warp:
+    desciption: Removes a warp
+    usage: /remove-warp WARP-NAME
+    permission: preoccupied.warp.remove
+    
+  warp-list:
+    desciption: Lists warps, optionally filtering by pattern
+    usage: /warp-list [NAME-PATTERN]
+    permission: preoccupied.warp.info
+    
+  warp-info:
+    desciption: Prints the information for a given warp
+    usage: /warp-info WARP-NAME
+    permission: preoccupied.warp.info
+
+  warp-to:
+    description: Jump to the output of the specified warp
+    usage: /warp-to WARP-NAME
+    permission: preoccupied.warp.cmd
