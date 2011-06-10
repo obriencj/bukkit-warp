@@ -457,15 +457,6 @@ public class WarpPlugin extends JavaPlugin {
 
 	Runnable task = new Runnable() {
 		public void run() {
-		    if(player.getLocation().getWorld() != destination.getWorld()) {
-			/* Hack to get us to the right place.
-			   Currently cross-world teleporting drops us
-			   off in the destination world's spawn
-			   location rather than the actual correct
-			   coordinates, so we need to pre-teleport. */
-			player.teleport(destination);
-		    }
-
 		    player.teleport(destination);
 		}
 	    };
