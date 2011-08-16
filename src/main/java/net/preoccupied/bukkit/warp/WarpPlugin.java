@@ -24,7 +24,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,6 +43,8 @@ public class WarpPlugin extends JavaPlugin {
 
     
     public void onEnable() {
+	System.out.println("Warp.onEnable()");
+
 	warpTriggers = new LocationMap<Warp>();
 	warpNames = new HashMap<String,Warp>();
 
@@ -51,14 +53,14 @@ public class WarpPlugin extends JavaPlugin {
 	loadWarps();
 	
 	PluginManager pm = getServer().getPluginManager();
-	
-	EventExecutor ee;
+	EventExecutor ee = null;
+
 	ee = new EventExecutor() {
 		public void execute(Listener ignored, Event e) {
-		    onPlayerMove((PlayerMoveEvent) e);
+		    onPlayerPortal((PlayerPortalEvent) e);
 		}
 	    };
-	pm.registerEvent(Event.Type.PLAYER_MOVE, null, ee, Priority.Low, this);
+	pm.registerEvent(Event.Type.PLAYER_PORTAL, null, ee, Priority.Low, this);
 
 	ee = new EventExecutor() {
 		public void execute(Listener ignored, Event e) {
@@ -75,7 +77,6 @@ public class WarpPlugin extends JavaPlugin {
     public void onDisable() {
 	warpTriggers.clear();
 	warpNames.clear();
-	teleportQueue.clear();
     }
     
     
@@ -387,29 +388,40 @@ public class WarpPlugin extends JavaPlugin {
 
 
 
-    private void onPlayerMove(PlayerMoveEvent pme) {
-	if (pme.isCancelled()) {
+    private void onPlayerPortal(PlayerPortalEvent ppe) {
+	if (ppe.isCancelled()) {
 	    return;
 	}
 
-	Location a = pme.getFrom();
-	Location b = pme.getTo();
+	Player player = ppe.getPlayer();
 
-	// we only want to trigger when a player moves from one block
-	// to another, within the same world.
+	ppe.useTravelAgent(false);
+	ppe.setCancelled(true);
 
-	if ((a.getWorld() == b.getWorld()) &&
-	    ((a.getBlockX() != b.getBlockX()) ||
-	     (a.getBlockZ() != b.getBlockZ()) ||
-	     (a.getBlockY() != b.getBlockY()))) {
+	if(player.isSneaking()) {
+	    return;
+	}
+	
+	Location trigger = ppe.getFrom();
 
-	    if(b.getBlock().getType() != Material.PORTAL)
+	Warp w = warpTriggers.get(trigger);
+	if (w == null) {
+	    return;
+
+	} else {
+	    String destname = w.getDestination();
+	    if(destname == null)
 		return;
 
-	    Warp w = warpTriggers.get(b);
-	    if (w != null) {
-		triggerWarp(pme, w);
-	    }
+	    Warp dest = getWarp(destname);
+	    if(dest == null)
+		return;
+
+	    Location output = dest.getOutput();
+	    if(output == null)
+		return;
+
+	    safeTeleport(player, output);
 	}
     }
 
@@ -425,30 +437,6 @@ public class WarpPlugin extends JavaPlugin {
 	    }
 	    teleportQueue.remove(chunk);
 	}
-    }
-
-
-
-    private void triggerWarp(PlayerMoveEvent pme, Warp trigger) {
-	final Player p = pme.getPlayer();
-
-	if(p.isSneaking())
-	    return;
-
-	String destname = trigger.getDestination();
-	if(destname == null)
-	    return;
-
-	Warp dest = getWarp(destname);
-	if(dest == null)
-	    return;
-	
-	final Location output = dest.getOutput();
-	if(output == null)
-	    return;
-
-	System.out.println(p.getName() + " triggered " + trigger.getName());
-	safeTeleport(p, output);
     }
 
 
@@ -477,7 +465,6 @@ public class WarpPlugin extends JavaPlugin {
 	    world.loadChunk(chunk);
 	}
     }
-
 
 
     public List<Class<?>> getDatabaseClasses() {

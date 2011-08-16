@@ -1,9 +1,11 @@
 name: Warp
 main: net.preoccupied.bukkit.warp.WarpPlugin
-version: 0.1
+version: 0.2
 author: obriencj@gmail.com
 database: true
 description: Warping via Nether Portals
+order: postworld
+depend: [Worlds, ]
 
 commands:
   add-warp:
@@ -55,3 +57,57 @@ commands:
     description: Jump to the output of the specified warp
     usage: /warp-to WARP-NAME
     permission: preoccupied.warp.cmd
+
+
+permissions:  
+  preoccupied.warp.admin:
+    description: Administrative control over warps
+    default: op
+    children:
+      - preoccupied.warp.add: true
+      - preoccupied.warp.remove: true
+      - preoccupied.warp.modify: true
+      - preoccupied.warp.info: true
+      - preoccupied.warp.cmd: true
+      - preoccupied.warp.trigger: true
+
+  preoccupied.warp.advanced:
+    description: Warp permissions for advanced members
+    default: false
+    children:
+      - preoccupied.warp.info: true
+      - preoccupied.warp.cmd: true
+      - preoccupied.warp.trigger: true
+
+  preoccupied.warp.member:
+    description: Warp permissions for normal members
+    default: false
+    children:
+      - preoccupied.warp.trigger: true
+  
+  preoccupied.warp.add:
+    description: Authority to create new warps
+    default: false
+
+  preoccupied.warp.remove:
+    description: Authority to remove warps
+    default: false
+
+  preoccupied.warp.modify:
+    description: Authority to edit warps
+    default: false
+
+  preoccupied.warp.info:
+    description: Authority to list or view warp information
+    default: false
+
+  preoccupied.warp.cmd:
+    description: Authority to remotely warp to a portal
+    default: false
+
+  preoccupied.warp.trigger:
+    description: Authority to trigger portals by walking into them
+    default: false
+
+
+# The end.
