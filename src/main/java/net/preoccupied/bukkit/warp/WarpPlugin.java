@@ -369,6 +369,16 @@ public class WarpPlugin extends JavaPlugin {
 	    public boolean run(Player player, String name) {
 		Warp warp = getWarp(name);
 
+		// If the name is not an exact match, try a near-match
+		if(warp == null) {
+		    for(Warp w : warpNames.values()) {
+			if(w.getName().startsWith(name)) {
+			    warp = w;
+			    break;
+			}
+		    }
+		}
+		
 		if(warp == null) {
 		    msg(player, "No such warp: " + name);
 		    return true;
