@@ -43,7 +43,7 @@ public class WarpPlugin extends JavaPlugin {
 
     
     public void onEnable() {
-	System.out.println("Warp.onEnable()");
+	System.out.println("Warp is enabled");
 
 	warpTriggers = new LocationMap<Warp>();
 	warpNames = new HashMap<String,Warp>();

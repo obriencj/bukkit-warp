@@ -64,26 +64,26 @@ permissions:
     description: Administrative control over warps
     default: op
     children:
-      - preoccupied.warp.add: true
-      - preoccupied.warp.remove: true
-      - preoccupied.warp.modify: true
-      - preoccupied.warp.info: true
-      - preoccupied.warp.cmd: true
-      - preoccupied.warp.trigger: true
+      preoccupied.warp.add: true
+      preoccupied.warp.remove: true
+      preoccupied.warp.modify: true
+      preoccupied.warp.info: true
+      preoccupied.warp.cmd: true
+      preoccupied.warp.trigger: true
 
   preoccupied.warp.advanced:
     description: Warp permissions for advanced members
     default: false
     children:
-      - preoccupied.warp.info: true
-      - preoccupied.warp.cmd: true
-      - preoccupied.warp.trigger: true
+      preoccupied.warp.info: true
+      preoccupied.warp.cmd: true
+      preoccupied.warp.trigger: true
 
   preoccupied.warp.member:
     description: Warp permissions for normal members
     default: false
     children:
-      - preoccupied.warp.trigger: true
+      preoccupied.warp.trigger: true
   
   preoccupied.warp.add:
     description: Authority to create new warps
