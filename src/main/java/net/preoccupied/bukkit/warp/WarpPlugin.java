@@ -3,27 +3,23 @@ package net.preoccupied.bukkit.warp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.PersistenceException;
 
 import net.preoccupied.bukkit.LocationMap;
+import net.preoccupied.bukkit.TeleportQueue;
 import net.preoccupied.bukkit.permissions.PermissionCommand;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.PluginManager;
@@ -37,9 +33,9 @@ public class WarpPlugin extends JavaPlugin {
     private LocationMap<Warp> warpTriggers = null;
     
     private Map<String,Warp> warpNames = null;
-    
-    private Map<Chunk,List<Runnable>> teleportQueue = null;
-    
+   
+    private TeleportQueue teleportQueue = null;
+ 
 
     
     public void onEnable() {
@@ -48,7 +44,8 @@ public class WarpPlugin extends JavaPlugin {
 	warpTriggers = new LocationMap<Warp>();
 	warpNames = new HashMap<String,Warp>();
 
-	teleportQueue = new HashMap<Chunk,List<Runnable>>();
+	teleportQueue = new TeleportQueue(this);
+	teleportQueue.enable();
 
 	loadWarps();
 	
@@ -62,13 +59,6 @@ public class WarpPlugin extends JavaPlugin {
 	    };
 	pm.registerEvent(Event.Type.PLAYER_PORTAL, null, ee, Priority.Low, this);
 
-	ee = new EventExecutor() {
-		public void execute(Listener ignored, Event e) {
-		    onChunkLoad((ChunkLoadEvent) e);
-		}
-	    };
-	pm.registerEvent(Event.Type.CHUNK_LOAD, null, ee, Priority.Low, this);
-
 	setupCommands();
     }
     
@@ -77,6 +67,7 @@ public class WarpPlugin extends JavaPlugin {
     public void onDisable() {
 	warpTriggers.clear();
 	warpNames.clear();
+	teleportQueue.disable();
     }
     
     
@@ -390,7 +381,7 @@ public class WarpPlugin extends JavaPlugin {
 		    return true;
 		}
 
-		safeTeleport(player, l);
+		teleportQueue.safeTeleport(player, l);
 		return true;
 	    }
 	};
@@ -431,50 +422,10 @@ public class WarpPlugin extends JavaPlugin {
 	    if(output == null)
 		return;
 
-	    safeTeleport(player, output);
+	    teleportQueue.safeTeleport(player, output);
 	}
     }
 
-
-
-    private void onChunkLoad(ChunkLoadEvent cle) {
-	Chunk chunk = cle.getChunk();
-	List<Runnable> queue = teleportQueue.get(chunk);
-
-	if(queue != null) {
-	    for(Runnable task : queue) {
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, task);
-	    }
-	    teleportQueue.remove(chunk);
-	}
-    }
-
-
-
-    public void safeTeleport(final Player player, final Location destination) {
-
-	Runnable task = new Runnable() {
-		public void run() {
-		    player.teleport(destination);
-		}
-	    };
-	
-	World world = destination.getWorld();
-	Chunk chunk = world.getChunkAt(destination);
-
-	if(world.isChunkLoaded(chunk)) {
-	    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, task);
-
-	} else {
-	    List<Runnable> queue = teleportQueue.get(chunk);
-	    if(queue == null) {
-		queue = new LinkedList<Runnable>();
-		teleportQueue.put(chunk, queue);
-	    }
-	    queue.add(task);
-	    world.loadChunk(chunk);
-	}
-    }
 
 
     public List<Class<?>> getDatabaseClasses() {
