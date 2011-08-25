@@ -39,8 +39,6 @@ public class WarpPlugin extends JavaPlugin {
 
     
     public void onEnable() {
-	System.out.println("Warp.onEnable()");
-
 	warpTriggers = new LocationMap<Warp>();
 	warpNames = new HashMap<String,Warp>();
 
@@ -60,6 +58,8 @@ public class WarpPlugin extends JavaPlugin {
 	pm.registerEvent(Event.Type.PLAYER_PORTAL, null, ee, Priority.Low, this);
 
 	setupCommands();
+
+	getServer().getLogging().info(this + " is enabled");
     }
     
     
@@ -68,6 +68,8 @@ public class WarpPlugin extends JavaPlugin {
 	warpTriggers.clear();
 	warpNames.clear();
 	teleportQueue.disable();
+
+	getServer().getLogging().info(this + " is disbled");
     }
     
     
