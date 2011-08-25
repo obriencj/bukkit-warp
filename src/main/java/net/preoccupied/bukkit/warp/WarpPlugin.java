@@ -59,7 +59,7 @@ public class WarpPlugin extends JavaPlugin {
 
 	setupCommands();
 
-	getServer().getLogging().info(this + " is enabled");
+	getServer().getLogger().info(this + " is enabled");
     }
     
     
@@ -69,7 +69,7 @@ public class WarpPlugin extends JavaPlugin {
 	warpNames.clear();
 	teleportQueue.disable();
 
-	getServer().getLogging().info(this + " is disbled");
+	getServer().getLogger().info(this + " is disbled");
     }
     
     
