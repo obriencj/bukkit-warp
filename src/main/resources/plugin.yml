@@ -11,11 +11,13 @@ commands:
   add-warp:
     description: Create a warp with the given name, setting the primary input
     usage: /add-warp WARP-NAME
+    aliases: [create-warp, ]
     permission: preoccupied.warp.add
     
-  set-warp-input:
+  set-warp-input-a:
     desciption: Sets the primary input Location for the given warp
     usage: /set-warp-input WARP-NAME
+    aliases: [set-warp-input, ]
     permission: preoccupied.warp.modify
     
   set-warp-input-b:
@@ -31,6 +33,7 @@ commands:
   set-warp-destination:
     desciption: Sets the destination of a warp to another warp, by name
     usage: /set-warp-destination WARP-NAME DESTINATION-NAME
+    aliases: [set-warp-dest, ]
     permission: preoccupied.warp.modify
     
   link-warps:
@@ -41,6 +44,7 @@ commands:
   remove-warp:
     desciption: Removes a warp
     usage: /remove-warp WARP-NAME
+    aliases: [delete-warp, ]
     permission: preoccupied.warp.remove
     
   warp-list:
@@ -56,6 +60,7 @@ commands:
   warp-to:
     description: Jump to the output of the specified warp
     usage: /warp-to WARP-NAME
+    aliases: [warp, ]
     permission: preoccupied.warp.cmd
 
 
@@ -108,6 +113,6 @@ permissions:
   preoccupied.warp.trigger:
     description: Authority to trigger portals by walking into them
     default: false
-
+    
 
 # The end.

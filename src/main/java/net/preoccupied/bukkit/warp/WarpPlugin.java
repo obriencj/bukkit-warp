@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.persistence.PersistenceException;
 
 import net.preoccupied.bukkit.LocationMap;
+import net.preoccupied.bukkit.PlayerCommand;
 import net.preoccupied.bukkit.TeleportQueue;
-import net.preoccupied.bukkit.permissions.PermissionCommand;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -144,16 +144,6 @@ public class WarpPlugin extends JavaPlugin {
     }
 
 
-    
-    private static final String safeStr(Object o) {
-	if(o == null) {
-	    return "[null]";
-	} else {
-	    return o.toString();
-	}
-    }
-
-
 
     private static final String globconvert(String pattern) {
 	pattern = pattern.replace("\\","\\\\");
@@ -167,7 +157,7 @@ public class WarpPlugin extends JavaPlugin {
 
     private void setupCommands() {
 
-	new PermissionCommand(this, "warp-list") {
+	new PlayerCommand(this, "warp-list") {
 	    public boolean run(Player player) {
 		msg(player, "Warp names:");
 		for(Warp w : warpNames.values()) {
@@ -175,6 +165,7 @@ public class WarpPlugin extends JavaPlugin {
 		}
 		return true;
 	    }
+
 	    public boolean run(Player player, String pattern) {
 		pattern = globconvert(pattern);
 		msg(player, "Warp names:");
@@ -188,19 +179,19 @@ public class WarpPlugin extends JavaPlugin {
 	};
 	
 
-	new PermissionCommand(this, "warp-info") {
+	new PlayerCommand(this, "warp-info") {
 	    public boolean run(Player player, String name) {
 		Warp warp = getWarp(name);
 		if(warp == null) {
-		    msg(player, "No such warp: " + name);
+		    msg(player, "No such warp:", name);
 		    
 		} else {
-		    msg(player, "Information for Warp ID: " + safeStr(warp.getId()));
-		    msg(player, " Warp Name: " + name);
-		    msg(player, " Dest Name: " + safeStr(warp.getDestination()));
-		    msg(player, " InputA: " + safeStr(warp.getInputA()));
-		    msg(player, " InputB: " + safeStr(warp.getInputB()));
-		    msg(player, " Output: " + safeStr(warp.getOutput()));
+		    msg(player, "Information for Warp ID:", warp.getId());
+		    msg(player, " Warp Name:", name);
+		    msg(player, " Dest Name:", warp.getDestination());
+		    msg(player, " InputA:", warp.getInputA());
+		    msg(player, " InputB:", warp.getInputB());
+		    msg(player, " Output:", warp.getOutput());
 		}
 		
 		return true;
@@ -208,10 +199,11 @@ public class WarpPlugin extends JavaPlugin {
 	};
 
 
-	new PermissionCommand(this, "add-warp") {
+	new PlayerCommand(this, "add-warp") {
 	    public boolean run(Player player, String name) {
 		return run(player, name, null);
 	    }
+
 	    public boolean run(Player player, String name, String dest) {
 		Warp w;
 		
@@ -235,16 +227,18 @@ public class WarpPlugin extends JavaPlugin {
 		    updateWarp(w);
 		}
 
+		msg(player, "Created warp:", name);
+
 		return true;
 	    }
 	};
 
 
-	new PermissionCommand(this, "set-warp-input") {
+	new PlayerCommand(this, "set-warp-input") {
 	    public boolean run(Player player, String name) {
 		Warp warp = warpNames.get(name);
 		if(warp == null) {
-		    msg(player, "No such warp: " + name);
+		    msg(player, "No such warp:", name);
 		    return true;
 		}
 
@@ -258,12 +252,14 @@ public class WarpPlugin extends JavaPlugin {
 		warpTriggers.put(l, warp);
 		updateWarp(warp);
 
+		msg(player, "Updated input-a location for warp", name);
+
 		return true;
     	    }
 	};
 
 
-	new PermissionCommand(this, "set-warp-input-b") {
+	new PlayerCommand(this, "set-warp-input-b") {
 	    public boolean run(Player player, String name) {
 		Warp warp = warpNames.get(name);
 		if(warp == null) {
@@ -281,12 +277,14 @@ public class WarpPlugin extends JavaPlugin {
 		warpTriggers.put(l, warp);
 		updateWarp(warp);
 		
+		msg(player, "Updated input-b location for warp", name);
+
 		return true;
 	    }
 	};
 
 
-	new PermissionCommand(this, "set-warp-output") {
+	new PlayerCommand(this, "set-warp-output") {
 	    public boolean run(Player player, String name) {
 		Warp warp = getWarp(name);
 		if(warp == null) {
@@ -297,12 +295,14 @@ public class WarpPlugin extends JavaPlugin {
 		warp.setOutput(player.getLocation());
 		updateWarp(warp);
 
+		msg(player, "Updated output location for warp", name);
+
 		return true;
 	    }
 	};
 
 
-	new PermissionCommand(this, "set-warp-destination") {
+	new PlayerCommand(this, "set-warp-destination") {
 	    public boolean run(Player player, String name, String dest) {
 		Warp warp = getWarp(name);
 		if(warp == null) {
@@ -313,12 +313,14 @@ public class WarpPlugin extends JavaPlugin {
 		warp.setDestination(dest);
 		updateWarp(warp);
 
+		msg(player, "Updated destination for warp", name, "to", dest);
+
 		return true;
 	    }
 	};
 
 
-	new PermissionCommand(this, "link-warps") {
+	new PlayerCommand(this, "link-warps") {
 	    public boolean run(Player player, String name1, String name2) {
 		Warp warp1 = getWarp(name1);
 		Warp warp2 = getWarp(name2);
@@ -342,7 +344,7 @@ public class WarpPlugin extends JavaPlugin {
 	};
 
 
-	new PermissionCommand(this, "remove-warp") {
+	new PlayerCommand(this, "remove-warp") {
 	    public boolean run(Player player, String name) {
 		Warp warp = getWarp(name);
 		if(warp == null) {
@@ -358,7 +360,7 @@ public class WarpPlugin extends JavaPlugin {
 	};	
 
 
-	new PermissionCommand(this, "warp-to") {
+	new PlayerCommand(this, "warp-to") {
 	    public boolean run(Player player, String name) {
 		Warp warp = getWarp(name);
 

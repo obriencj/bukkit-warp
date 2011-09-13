@@ -12,8 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import net.preoccupied.bukkit.permissions.PermissionCheck;
-
 
 
 @Entity()
@@ -29,9 +27,6 @@ public class Warp {
     private String destination = null;
 
     private String permission = null;
-
-    @Transient
-    private PermissionCheck permissionCheck = null;
 
     private String output_w = null;
     private int output_x = 0;
@@ -74,7 +69,6 @@ public class Warp {
 
     public void setPermission(String permission) {
 	this.permission = permission;
-	this.permissionCheck = PermissionCheck.forNode(permission);
     }
 
 
@@ -84,10 +78,7 @@ public class Warp {
 
 
     public boolean checkPermission(Player player) {
-	if(permissionCheck == null) {
-	    permissionCheck = new PermissionCheck("preoccupied.warp.portal." + this.name);
-	}
-	return permissionCheck.check(player);
+	return (this.permission == null)? true: player.hasPermission(this.permission);
     }
 
 
