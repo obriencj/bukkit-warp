@@ -228,6 +228,7 @@ public class WarpPlugin extends JavaPlugin {
 		}
 
 		msg(player, "Created warp:", name);
+		info(player.getName(), "created a warp named", name, "at", l);
 
 		return true;
 	    }
@@ -253,6 +254,7 @@ public class WarpPlugin extends JavaPlugin {
 		updateWarp(warp);
 
 		msg(player, "Updated input-a location for warp", name);
+		info(player.getName(), "set input-a for warp", name, "to", l);
 
 		return true;
     	    }
@@ -278,6 +280,7 @@ public class WarpPlugin extends JavaPlugin {
 		updateWarp(warp);
 		
 		msg(player, "Updated input-b location for warp", name);
+		info(player.getName(), "set input-b for warp", name, "to", l);
 
 		return true;
 	    }
@@ -292,10 +295,12 @@ public class WarpPlugin extends JavaPlugin {
 		    return true;
 		}
 
-		warp.setOutput(player.getLocation());
+		Location l = player.getLocation();
+		warp.setOutput(l);
 		updateWarp(warp);
 
 		msg(player, "Updated output location for warp", name);
+		info(player.getName(), "set output for warp", name, "to", l);
 
 		return true;
 	    }
@@ -314,6 +319,7 @@ public class WarpPlugin extends JavaPlugin {
 		updateWarp(warp);
 
 		msg(player, "Updated destination for warp", name, "to", dest);
+		info(player.getName(), "set destination for warp", name, "to", dest);
 
 		return true;
 	    }
@@ -339,6 +345,8 @@ public class WarpPlugin extends JavaPlugin {
 		warp2.setDestination(name1);
 		updateWarp(warp2);
 
+		info(player.getName(), "linked warps", name1, "and", name2);
+
 		return true;
 	    }
 	};
@@ -354,6 +362,8 @@ public class WarpPlugin extends JavaPlugin {
 		    deleteWarp(warp);
 		    msg(player, "Deleted warp: " + name);
 		}
+		
+		info(player.getName(), "deleted warp", name);
 		
 		return true;
 	    }
